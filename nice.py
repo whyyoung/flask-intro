@@ -16,7 +16,7 @@ AWESOMENESS = [
 def start_here():
     """Home page."""
 
-    return "<!doctype html><html>Hi! This is the home page.<html>"
+    return "<!doctype html><html>Hi! <a href='/hello'>Click me!</a><html>"
 
 
 @app.route('/hello')
@@ -32,12 +32,23 @@ def say_hello():
       <body>
         <h1>Hi There!</h1>
         <form action="/greet">
-          <label>What's your name? <input type="text" name="person"></label>
+          <label>What's your name? <input type="text" name="person"></label><br>
+          <select name="greetingtype">
+            <option value="awesome">awesome</option>
+            <option value="terrific">terrific</option>
+            <option value="fantastic">fantastic</option>
+          </select><br>
           <input type="submit">
         </form>
+        <form action="/diss">
+          <label>What's your name? <input type="text" name="person"></label><br>
+          <input type="submit">
+          </form>
       </body>
     </html>
     """
+
+
 
 
 @app.route('/greet')
@@ -46,7 +57,7 @@ def greet_person():
 
     player = request.args.get("person")
 
-    compliment = choice(AWESOMENESS)
+    compliment = request.args.get("greetingtype")
 
     return """
     <!doctype html>
@@ -61,7 +72,31 @@ def greet_person():
     """ % (player, compliment)
 
 
+@app.route('/diss')
+def insult_person():
+    """Get user by name."""
+
+    player = request.args.get("person")
+
+    insults = ['stupid', 'stinky', 'horrible', 'terrible', 'no good', 'useless', 'annoying']
+    insult = choice(insults)
+
+
+    return """
+    <!doctype html>
+    <html>
+      <head>
+        <title>A Anti-Compliment</title>
+      </head>
+      <body>
+        Hi %s I think you're %s!
+      </body>
+    </html>
+    """ % (player, insult)
+
+
+
 if __name__ == '__main__':
     # debug=True gives us error messages in the browser and also "reloads"
     # our web app if we change the code.
-    app.run(debug=True)
+    app.run(debug=True, port=5002)
